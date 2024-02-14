@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb-001
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - local-net
+    volumes:
+      - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    environment:
+      MONGO_INITDB_DATABASE: orders
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: TfQM*r8Ak7@Ghd4>EL?C9q
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq-001
+    restart: always
+    ports:
+      - "5672:5672"
+    networks:
+      - local-net
+
+  orders_processor:
+    build:
+      context: ../orders_processor/
+      dockerfile: ../orders_processor/Dockerfile
+    container_name: orders_processor-001
+    restart: always
+    ports:
+      - "8088:8088"
+    networks:
+      - local-net
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - mongodb
+      - rabbitmq
+
+  orders_api:
+    build:
+      context: ../orders_api/
+      dockerfile: ../orders_api/Dockerfile
+    container_name: orders-api-001
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - local-net
+    environment:
+      SPRING_DATA_MONGODB_HOST: mongodb
+      SPRING_RABBITMQ_HOST: rabbitmq
+    depends_on:
+      - orders_processor
+
+networks:
+  local-net:
+    driver: bridge
