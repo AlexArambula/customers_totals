@@ -8,9 +8,9 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example</groupId>
-  <artifactId>orders_api</artifactId>
+  <artifactId>orders_processor</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <description>Orders API project</description>
+  <description>Orders Processor project</description>
   <build>
     <plugins>
       <plugin>
