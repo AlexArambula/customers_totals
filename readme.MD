@@ -13,7 +13,7 @@ This is a Java demo app to process customer orders using 2 different services:
 - [Lombok](https://projectlombok.org/).
 - [MapStruct](https://mapstruct.org/).
 - [Maven3](https://maven.apache.org/).
-- [OpeanAPI3](https://swagger.io/specification/).
+- [OpenAPI3](https://swagger.io/specification/).
 
 ## How to use
 1. Using Docker (required).
