@@ -6,6 +6,7 @@ import com.example.dto.OrderDto;
 import com.example.entity.Customer;
 import com.example.entity.CustomerTotals;
 import com.example.entity.Order;
+import com.example.exception.OrderNotFoundException;
 import com.example.mapper.CustomerTotalsMapper;
 import com.example.mapper.OrderMapper;
 import com.example.repository.CustomerTotalsRepository;
@@ -49,8 +50,9 @@ public class OrderService {
     }
 
     @Cacheable("orders-cache")
-    public Mono<OrderDto> fetchOrderById(@NonNull String id) {
-        return orderRepository.findById(id)
+    public Mono<OrderDto> fetchOrderById(@NonNull String orderId) {
+        return orderRepository.findById(orderId)
+                .switchIfEmpty(Mono.error(new OrderNotFoundException(orderId)))
                 .map(orderMapper::entityToDto)
                 .cache();
     }
@@ -67,6 +69,7 @@ public class OrderService {
     public Mono<OrderDto> updateOrder(@NonNull String orderId, OrderUpdateCriteria criteria) {
         if (criteria == OrderUpdateCriteria.CANCEL) {
             return orderRepository.findById(orderId)
+                    .switchIfEmpty(Mono.error(new OrderNotFoundException(orderId)))
                     .map(order -> {
                         order.setStatus(Order.Status.CANCELED);
                         return order;
@@ -75,7 +78,6 @@ public class OrderService {
                     .map(orderMapper::entityToDto)
                     .doOnSuccess(orderDto -> messagingService.sendCancelOrderMessage(orderDto.id()));
         }
-
         return Mono.empty();
     }
 

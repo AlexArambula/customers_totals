@@ -60,10 +60,8 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     public Mono<ResponseEntity<OrderDto>> fetchById(@PathVariable String id) {
         return orderService.fetchOrderById(id)
-                .map(Optional::of)
-                .defaultIfEmpty(Optional.empty())
-                .map(optional -> optional.map(ResponseEntity::ok).orElseGet(() ->
-                        ResponseEntity.status(HttpStatus.NOT_FOUND).build()));
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @Operation(summary = "Perform a specific update operation on an Order by its Id")
@@ -78,9 +76,7 @@ public class OrderController {
     public Mono<ResponseEntity<OrderDto>> update(@PathVariable String id,
                                  @RequestParam(name = "operation") OrderUpdateCriteria criteria) {
         return orderService.updateOrder(id, criteria)
-                .map(Optional::of)
-                .defaultIfEmpty(Optional.empty())
-                .map(optional -> optional.map(ResponseEntity::ok).orElseGet(() ->
-                        ResponseEntity.status(HttpStatus.NOT_FOUND).build()));
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

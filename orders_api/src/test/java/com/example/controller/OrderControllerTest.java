@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dto.OrderDto;
+import com.example.exception.OrderNotFoundException;
 import com.example.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,7 +94,7 @@ class OrderControllerTest {
     @Test
     void fetchById_testNotFound() {
         doAnswer(invocation ->
-                Mono.empty())
+                Mono.error(new OrderNotFoundException()))
                 .when(orderService).fetchOrderById(anyString());
 
         webTestClient.get()
@@ -117,7 +118,7 @@ class OrderControllerTest {
     @Test
     void update_testNotFound() {
         doAnswer(invocation ->
-                Mono.empty())
+                Mono.error(new OrderNotFoundException()))
                 .when(orderService).updateOrder(eq(id), eq(OrderUpdateCriteria.CANCEL));
 
         webTestClient.put()
