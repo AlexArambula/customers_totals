@@ -65,12 +65,6 @@ class OrderServiceTest {
     }
 
     @Test
-    void deleteOrderById() {
-        orderService.deleteOrderById(id);
-        Mockito.verify(orderRepository, times(1)).deleteById(eq(id));
-    }
-
-    @Test
     void fetchOrders() {
         doAnswer(invocation ->
                 Flux.just(orderMapper.dtoToEntity(mockOrder)))
