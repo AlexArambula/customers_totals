@@ -41,10 +41,6 @@ public class OrderService {
                 .doOnSuccess(orderDto -> messagingService.sendCreateOrderMessage(orderDto.id()));
     }
 
-    public Mono<Void> deleteOrderById(@NonNull String orderId) {
-        return orderRepository.deleteById(orderId);
-    }
-
     public Flux<OrderDto> fetchOrders() {
         return orderRepository.findAll().map(orderMapper::entityToDto);
     }
